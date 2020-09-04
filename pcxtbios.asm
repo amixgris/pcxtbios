@@ -994,7 +994,11 @@ print_error:
 	jz	@@display_video			; Yes
 	mov	al, [es:10h]			; Check equipment word
 	and	al, 00110000b			; Is it EGA/VGA?
-	jnz	@@is_cga			; No, we have CGA
+	;jnz	@@is_cga			; No, we have CGA
+
+	; VXT: Force CGA!
+	jmp @@is_cga
+
 	mov	si, offset str_ega_vga		; Otherwise we have EGA/VGA
 	jmp	short @@display_video
 @@is_cga:
