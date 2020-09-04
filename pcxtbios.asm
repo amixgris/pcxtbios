@@ -53,8 +53,8 @@ TURBO_HOTKEY	= 1		; Define to enable "CTRL ALT -" hotkey to toggle turbo mode
 TEST_VIDEO	= 1		; Define to test video memory at power on (Mono/Herc/CGA only)
 				;   If enabled, CLEAR_UMA must be disabled due to memory limits
 
-MAX_MEMORY	= 640		; Maximum conventional memory allowed in KB (with EGA/VGA)
-;MAX_MEMORY	= 704		; (with Mono/Hercules)
+;MAX_MEMORY	= 640		; Maximum conventional memory allowed in KB (with EGA/VGA)
+MAX_MEMORY	= 704		; (with Mono/Hercules)
 ;MAX_MEMORY	= 736		; (with CGA)
 
 ;FAST_MEM_CHECK	= 1		; Define to use faster but less thorough memory check
@@ -442,20 +442,23 @@ segment	code
 
 	org	0E000h				; 8K ROM BIOS starts at F000:E000
 
+; VXT: Use our custom title.
 
-ifdef	IBM_PC
-ifdef	TURBO_ENABLED
-	str_banner	db	'Turbo PC BIOS v3.1 - 10/28/2017', 0
-else
-	str_banner	db	'Super PC BIOS v3.1 - 10/28/2017', 0
-endif
-else
-ifdef	TURBO_ENABLED
-	str_banner	db	'Turbo XT BIOS v3.1 - 10/28/2017', 0
-else
-	str_banner	db	'Super XT BIOS v3.1 - 10/28/2017', 0
-endif
-endif
+;ifdef	IBM_PC
+;ifdef	TURBO_ENABLED
+;	str_banner	db	'Turbo PC BIOS v3.1 - 10/28/2017', 0
+;else
+;	str_banner	db	'Super PC BIOS v3.1 - 10/28/2017', 0
+;endif
+;else
+;ifdef	TURBO_ENABLED
+;	str_banner	db	'Turbo XT BIOS v3.1 - 10/28/2017', 0
+;else
+;	str_banner	db	'Super XT BIOS v3.1 - 10/28/2017', 0
+;endif
+;endif
+
+str_banner	db	'VirtualXT BIOS v?.?', 20h, 20h, 20h, 20h, 0
 str_banner_end:
 
 str_ega_vga	db	195, ' EGA/VGA Graphics', 0
@@ -698,7 +701,12 @@ endif
 
 	mov	[ds:10h], ax			; Start building Equipment Flag
 	and	al, 00110000b			;   if video card, mode set
-	jnz	@@video_found			;   found video interface
+
+	; VXT: Not sure why this is not working. Fix auto-detection!
+
+	;jnz	@@video_found			;   found video interface
+	jmp @@video_found
+
 	mov	ax, offset dummy_int		; No hardware or EGA/VGA, dummy_int
 	mov	[es:40h], ax			;   becomes int_10 video service
 	jmp	short @@skip_video
@@ -939,8 +947,11 @@ endif
 @@config:
 	mov	si, offset str_banner
 	call	title_print
-	mov	si, offset str_banner_2
-	call	print
+
+	; VXT: Well... sorry guys just you will be credited in the readme file.
+
+	;mov	si, offset str_banner_2
+	;call	print
 
 	test	[byte es:15h], 11111111b	; Any errors so far?
 	jz	@@no_errors			;   no, skip
@@ -4779,7 +4790,11 @@ proc	title_print	near
 	mov	bx, 0070h			; Mono uses inverse attribute
 	cmp	[byte es:49h], 7		; Get CRT mode
 	je	@@loop				;   monochrome
-	mov	bl, 1Fh				; Color uses white on blue
+
+	; VXT: Use our color!
+
+	;mov	bl, 1Fh				; Color uses white on blue
+	mov	bl, 30h
 
 @@loop:
 	lodsb					; Print zero terminated string
@@ -4803,7 +4818,11 @@ else
 
 	sub	bl, 61h				; Change color to white on black
 	jns	@@fade				;   jump if monochrome
-	mov	bl, 001h			;   else use black on blue
+	;mov	bl, 001h			;   else use black on blue
+
+	; VXT: Use our color.
+	
+	mov	bl, 003h
 
 @@fade:
 	mov	al, 0B2h			; 75% block

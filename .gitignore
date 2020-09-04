@@ -1,2 +1,4 @@
 eproms/*
-test/*
+pcxtbios.lst
+pcxtbios.bin
+test/picoxt.exe
