@@ -54,8 +54,8 @@ TEST_VIDEO	= 1		; Define to test video memory at power on (Mono/Herc/CGA only)
 				;   If enabled, CLEAR_UMA must be disabled due to memory limits
 
 ;MAX_MEMORY	= 640		; Maximum conventional memory allowed in KB (with EGA/VGA)
-MAX_MEMORY	= 704		; (with Mono/Hercules)
-;MAX_MEMORY	= 736		; (with CGA)
+;MAX_MEMORY	= 704		; (with Mono/Hercules)
+MAX_MEMORY	= 736		; (with CGA)
 
 ;FAST_MEM_CHECK	= 1		; Define to use faster but less thorough memory check
 ;NO_MEM_CHECK	= 1		; Define to clear memory only
